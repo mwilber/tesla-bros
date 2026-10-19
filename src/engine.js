@@ -6,6 +6,26 @@ export const STAGES = [
   { name: 'THE GIGA FORTRESS', theme: 'fortress', width: 6528, goal: 6200, checkpoint: 3300 },
 ];
 export const overlaps = (a,b) => a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y;
+// Estimate the remaining airborne time so a short hop and a held jump each
+// finish one barrel roll. Only presentation state changes; collision boxes stay fixed.
+function updateRoll(p, solids, dt, hold) {
+  if(!p.rolling)return;
+  if(p.grounded){p.roll=Math.PI*2;p.rolling=false;return;}
+  const jetTime=hold&&p.thrust&&p.vy<0?Math.max(0,p.jet):0;
+  const feet=p.y+p.h+p.vy*jetTime+195*jetTime*jetTime;
+  const vy=p.vy+390*jetTime;
+  let remaining=Infinity;
+  for(const b of solids){
+    const discriminant=vy*vy+2500*(b.y-feet);
+    if(discriminant<0)continue;
+    const fallTime=(-vy+Math.sqrt(discriminant))/1250;
+    if(fallTime<0)continue;
+    const t=jetTime+fallTime, x=p.x+p.vx*t;
+    if(x+p.w>b.x&&x<b.x+b.w)remaining=Math.min(remaining,t);
+  }
+  if(!Number.isFinite(remaining))remaining=.25;
+  p.roll=Math.min(Math.PI*2,p.roll+(Math.PI*2-p.roll)*dt/Math.max(dt,remaining));
+}
 export function makeLevel(index) {
   const cfg = STAGES[index];
   const level = { ...cfg, index, solids: [], coins: [], enemies: [], hazards: [], pickups: [], projectiles: [], checkpointReached: false };
@@ -52,7 +72,7 @@ export function makeLevel(index) {
 export class Game {
   constructor(){this.best=0;this.events=[];this.reset();}
   reset(){this.stage=0;this.score=0;this.cells=0;this.lives=3;this.level=makeLevel(0);this.time=300;this.state='ready';this.camera=0;this.elapsed=0;this.deathTimer=0;this.spawn();}
-  spawn(){this.player={x:this.level.checkpointReached?this.level.checkpoint+12:100,y:FLOOR-24,w:42,h:24,vx:0,vy:0,grounded:true,coyote:.1,buffer:0,pressure:100,jet:0,facing:1,invincible:2,shield:false};this.camera=Math.max(0,this.player.x-270);}
+  spawn(){this.player={x:this.level.checkpointReached?this.level.checkpoint+12:100,y:FLOOR-24,w:42,h:24,vx:0,vy:0,grounded:true,coyote:.1,buffer:0,pressure:100,jet:0,facing:1,invincible:2,shield:false,roll:0,rolling:false};this.camera=Math.max(0,this.player.x-270);}
   start(){if(this.state==='ready'){this.state='playing';this.events.push({type:'start'});}else if(this.state==='paused')this.state='playing';else if(this.state==='stageclear')this.next();else if(this.state==='gameover'||this.state==='won'){this.reset();this.state='playing';}}
   pause(){if(this.state==='playing')this.state='paused';else if(this.state==='paused')this.state='playing';}
   restart(){this.reset();this.state='playing';this.events.push({type:'start'});}
@@ -74,7 +94,7 @@ export class Game {
     const target=direction*maxSpeed,accel=p.grounded?1900:1100;
     p.vx+=Math.max(-accel*dt,Math.min(accel*dt,target-p.vx));
     if(direction)p.facing=direction;
-    if(p.buffer>0&&p.coyote>0&&p.pressure>=18){p.vy=-452;p.grounded=false;p.coyote=0;p.buffer=0;p.pressure-=18;p.jet=.24;this.events.push({type:'jump'});}
+    if(p.buffer>0&&p.coyote>0&&p.pressure>=18){p.vy=-452;p.grounded=false;p.coyote=0;p.buffer=0;p.pressure-=18;p.jet=.24;p.roll=0;p.rolling=true;this.events.push({type:'jump'});}
     const thrust=input.jump&&p.jet>0&&p.pressure>0&&p.vy<0;
     p.jet=Math.max(0,p.jet-dt);
     p.thrust=!!thrust;
@@ -88,6 +108,7 @@ export class Game {
     p.x=Math.max(0,Math.min(l.width-p.w,p.x));
     p.y+=p.vy*dt;p.grounded=false;
     for(const b of l.solids){b.bump=Math.max(0,(b.bump||0)-dt);if(overlaps(p,b)){if(p.vy>=0){p.y=b.y-p.h;p.vy=0;p.grounded=true;p.jet=0;}else{p.y=b.y+b.h;p.vy=0;p.jet=0;this.hitBlock(b);}}}
+    updateRoll(p,l.solids,dt,!!input.jump);
     for(const c of l.coins)if(!c.taken&&overlaps(p,c)){c.taken=true;this.collect();this.events.push({type:'spark',x:c.x,y:c.y});}
     for(const s of l.pickups)if(!s.taken&&overlaps(p,s)){s.taken=true;p.shield=true;this.reward(500);this.events.push({type:'shield',text:'ION SHIELD · ONE FREE HIT'});}
     if(!l.checkpointReached&&p.x>=l.checkpoint){l.checkpointReached=true;this.reward(250);this.events.push({type:'checkpoint',text:'CHECKPOINT · CHARGE SAVED'});}

@@ -4,5 +4,5 @@
   "private": true,
   "type": "module",
   "description": "A cold-gas-powered browser platformer. World 1, four stages.",
-  "scripts": { "dev": "node server.js", "start": "node server.js", "test": "node --test", "check": "node --check src/game.js && node --check src/engine.js && node --check src/render.js && node --check server.js" }
+  "scripts": { "dev": "node server.js", "start": "node server.js", "test": "node --test", "check": "node --check src/game.js && node --check src/engine.js && node --check src/render.js && node --check src/roadster.js && node --check server.js" }
 }

@@ -39,3 +39,33 @@ test('the fortress sentinel requires three successful stomps',()=>{
   assert.equal(g.lives,3);assert.equal(g.score,1750);
 });
 test('timeout consumes one life and respawn restores the clock for a playable attempt',()=>{const g=fresh();g.time=.001;step(g,1);assert.equal(g.state,'dying');step(g,140);assert.equal(g.lives,2);assert.equal(g.state,'playing');assert.ok(g.time>299);});
+
+test('short and held jet jumps each complete one barrel roll before landing upright',()=>{
+  for(const hold of [1,8,40]){
+    const g=fresh();let previous=0,airborneFrames=0;
+    for(let i=0;i<180;i++){
+      g.step(1/120,{jump:i<hold,jumpPressed:i===0,jumpReleased:i===hold});
+      assert.ok(g.player.roll>=previous,'roll must advance in one direction');
+      assert.ok(g.player.roll<=Math.PI*2,'each jump rolls only once');
+      previous=g.player.roll;
+      if(!g.player.grounded)airborneFrames++;
+      else if(i>0)break;
+    }
+    assert.ok(airborneFrames>15);assert.equal(g.player.roll,Math.PI*2);assert.equal(g.player.rolling,false);
+    g.step(1/120,{jump:true,jumpPressed:true});assert.equal(g.player.rolling,true);assert.ok(g.player.roll<.3,'a new jump starts a new roll');
+  }
+});
+test('a crate-interrupted jump lands upright and pausing freezes its roll',()=>{
+  const g=fresh();g.player.x=480;step(g,8,{jump:true,jumpPressed:true});const roll=g.player.roll;
+  g.pause();step(g,20);assert.equal(g.player.roll,roll);g.pause();step(g,130);
+  assert.equal(g.player.grounded,true);assert.equal(g.player.roll,Math.PI*2);assert.equal(g.player.rolling,false);
+});
+test('barrel-roll projection leaves the nose-to-tail axis fixed while roof and wheels invert',async()=>{
+  const {projectRoadsterPoint:project}=await import('../src/roadster.js');
+  for(const angle of [0,Math.PI/2,Math.PI,Math.PI*1.5,Math.PI*2]){
+    for(const x of [-25,26]){const point=project([x,0,0],angle);assert.equal(point.x,x);assert.ok(Math.abs(point.y)<1e-10);assert.ok(Math.abs(point.depth)<1e-10);}
+  }
+  assert.ok(project([0,10,0],0).y<0);assert.ok(project([0,10,0],Math.PI).y>0);
+  const upright=project([8,10,5],0),complete=project([8,10,5],Math.PI*2);
+  assert.ok(Math.abs(upright.x-complete.x)<1e-10&&Math.abs(upright.y-complete.y)<1e-10);
+});

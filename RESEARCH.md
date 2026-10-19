@@ -18,4 +18,4 @@ Sources consulted:
 - **Finite pressure:** the telemetry meter drops during a jump; jet visuals are pale white rather than a combustion flame.
 - **Recharge:** solid-ground contact restores pressure quickly so the player can keep platforming.
 
-Jump height, gas consumption, immediate ground recharge, Shift boost, and the physics are **arcade inventions**. They are not predictions of the real vehicle's performance or operating instructions. The pixel Roadster is a stylized red sports car informed by the recognizable Roadster silhouette and the supplied airborne-car reference, rather than a technical model of the new prototype.
+Jump height, gas consumption, immediate ground recharge, Shift boost, and the physics are **arcade inventions**. They are not predictions of the real vehicle's performance or operating instructions. The pixel Roadster uses the supplied demo references: a low silver wedge, swept dark glazing, black lower bodywork, large turbine-style wheels, and a thin red tail light. A small faceted model rotates around its longitudinal (nose-to-tail) axis for one barrel roll per jet jump. It is a stylized arcade interpretation of the prototype.

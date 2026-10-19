@@ -26,7 +26,7 @@ Open **http://localhost:5173** and choose **Start Engine**. You can also serve t
 
 Touch controls appear on devices with a coarse pointer. Fullscreen is available through the top-right control when supported by the browser.
 
-A jump releases a short burst of gas. Holding jump extends the burst; landing on any solid surface replenishes pressure. Hit question crates from below to release charge cells or an ion shield. Stomp service bots, collect 50 cells for an extra life, and pass the midpoint flag to set a checkpoint. Reach each stage's Supercharger gate. The final sentinel takes three stomps before the gate opens.
+The silver, low-profile Roadster performs a full barrel roll around its nose-to-tail axis on each jet jump. A jump releases a short burst of gas. Holding jump extends the burst; landing on any solid surface replenishes pressure. Hit question crates from below to release charge cells or an ion shield. Stomp service bots, collect 50 cells for an extra life, and pass the midpoint flag to set a checkpoint. Reach each stage's Supercharger gate. The final sentinel takes three stomps before the gate opens.
 
 ## World 1
 
@@ -44,10 +44,11 @@ npm run check
 npm test
 ```
 
-The Node test suite covers variable jump height, gas recovery, collisions, crate rewards, extra lives, shields, stomping, checkpoints, pause, game over, four-stage progression, the sentinel, and recorded input routes through every stage's terrain. Terrain replays exclude enemies; enemy and boss interactions have separate tests. Desktop controls, the help dialog, pause/resume, and a 390px mobile layout were also checked in the browser.
+The Node test suite covers variable jump height, gas recovery, collisions, crate rewards, extra lives, shields, stomping, checkpoints, pause, game over, four-stage progression, the sentinel, full jump rolls and their longitudinal axis, and recorded input routes through every stage's terrain. Terrain replays exclude enemies; enemy and boss interactions have separate tests. Desktop controls, the help dialog, pause/resume, and a 390px mobile layout were also checked in the browser.
 
 - `src/engine.js`: deterministic simulation and authored stages.
 - `src/render.js`: Canvas 2D pixel art, backgrounds, and particles.
+- `src/roadster.js`: silver Roadster model and longitudinal roll projection.
 - `src/game.js`: browser input, UI, audio, and fixed-step game loop.
 - `tests/`: game simulation tests and recorded terrain routes.
 - `RESEARCH.md`: Roadster sources and the interpretation used for gameplay.
