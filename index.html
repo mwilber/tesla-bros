@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#eceee5" />
+  <meta name="description" content="Tesla Bros. A retro platformer with a cold-gas-powered Roadster. Play four stages of World 1 in your browser." />
+  <title>Tesla Bros. — Take the high road.</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23e8503d'/%3E%3Cpath d='M6 25v-7h7l4-7h11l5 7h3v7z' fill='%23fff'/%3E%3Ccircle cx='12' cy='26' r='4' fill='%23272d29'/%3E%3Ccircle cx='30' cy='26' r='4' fill='%23272d29'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="./" class="brand" aria-label="Tesla Bros. home"><span class="brand-icon"><svg viewBox="0 0 40 30" aria-hidden="true"><path d="M3 20v-7h7l6-7h12l6 7h3v9H3z" fill="currentColor"/><path d="M15 9h10l4 5H12z" fill="#e8503d"/><path d="M9 20h6v7H9zm18 0h6v7h-6z" fill="#252c27"/></svg></span><span>TESLA<span class="brand-dot">●</span>BROS.</span></a>
+    <span class="header-caption">A NEW KIND OF AIR TIME.</span>
+    <nav aria-label="Game tools"><button id="help-button" class="nav-button"><span class="key-icon">?</span> How to play</button><span class="nav-divider"></span><button id="sound-button" class="nav-button" aria-pressed="true"><span id="sound-icon">◖))</span><span id="sound-label">Sound on</span></button><button id="fullscreen-button" class="icon-button" aria-label="Enter fullscreen" title="Fullscreen">⛶</button></nav>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div><div class="eyebrow"><span class="status-dot"></span> THE ORIGINAL ELECTRIC ADVENTURE</div><h1 id="page-title">TAKE THE <span>HIGH ROAD.</span></h1></div>
+      <div class="intro-right"><span class="edition">WORLD 01 <span> / </span> FIRST FLIGHT</span><p>Four stages. Zero emissions.<br>A little less gravity.</p></div>
+    </section>
+    <section class="arcade" id="arcade" aria-label="Tesla Bros. browser game">
+      <div class="arcade-top"><div class="live-label"><span class="status-dot"></span><span id="stage-name">01—1 / GREENLINE RUN</span></div><div class="stage-nav" aria-label="World 1 stages"><span class="stage-label">WORLD 1</span><span class="stage-pill current" data-stage="0">1</span><span class="stage-connector"></span><span class="stage-pill" data-stage="1">2</span><span class="stage-connector"></span><span class="stage-pill" data-stage="2">3</span><span class="stage-connector"></span><span class="stage-pill" data-stage="3">4</span></div><button id="pause-button" class="pause-button" aria-label="Pause game" disabled>Ⅱ <span>PAUSE</span></button></div>
+      <div class="game-screen" id="game-screen">
+        <canvas id="game" width="960" height="432" tabindex="0" aria-label="Tesla Bros platformer. Move with arrow keys or A and D. Hold Space to jet jump. Shift to boost. P to pause."></canvas>
+        <div class="hud" aria-hidden="true"><div><span class="hud-label">SCORE</span><strong id="score">000000</strong></div><div><span class="hud-label">CHARGE CELLS</span><strong><span class="coin-icon">ϟ</span> × <span id="coins">00</span></strong></div><div class="hud-right"><div><span class="hud-label">LIVES</span><strong id="lives">× 03</strong></div><div><span class="hud-label">TIME</span><strong id="time">300</strong></div></div></div>
+        <div class="overlay" id="overlay"><div class="start-card"><div class="card-eyebrow" id="overlay-eyebrow">READY FOR LIFTOFF?</div><h2 id="overlay-title">LESS ROAD.<br>MORE ROADSTER.</h2><p id="overlay-description">Fire up your cold-gas thrusters.<br>The first flight starts here.</p><button class="primary-button" id="start-button">START ENGINE <span>↗</span></button><span class="start-hint" id="start-hint">or press Enter to start</span></div><div class="overlay-tag" id="overlay-tag"><span>100% ELECTRIC</span><span>8-BIT SPIRIT.</span></div></div>
+        <div class="announcement" id="announcement" role="status" aria-live="polite"></div>
+        <div class="touch-controls" id="touch-controls"><div><button data-control="left" aria-label="Move left">◀</button><button data-control="right" aria-label="Move right">▶</button></div><div><button data-control="run" aria-label="Boost">ϟ</button><button data-control="jump" class="touch-jump" aria-label="Jet jump">↑</button></div></div>
+      </div>
+      <div class="telemetry"><div class="thruster-state"><span class="jet-symbol">↥</span><div><span class="telemetry-label">COLD-GAS PRESSURE</span><div class="pressure-row"><div class="pressure-track"><div id="pressure-bar"></div></div><strong id="pressure-value">100%</strong></div></div></div><div class="telemetry-middle"><span class="status-dot"></span><span id="drive-status">THRUSTERS READY</span></div><div class="progress-state"><span class="telemetry-label">STAGE PROGRESS</span><div class="progress-row"><div class="progress-track"><div id="progress-bar"></div></div><span id="progress-value">00%</span><span>⚑</span></div></div></div>
+    </section>
+    <section class="below-game" aria-label="Controls and game information"><div class="control-guide"><span class="controls-label">THE CONTROLS</span><span><kbd>←</kbd><kbd>→</kbd> Drive</span><span><kbd class="wide-key">SPACE</kbd> Hold to jet jump</span><span><kbd>SHIFT</kbd> Boost</span><span><kbd>P</kbd> Pause</span></div><button class="text-button" id="restart-button">↻ <span>Restart run</span></button></section>
+    <footer><p>BUILT FOR THE JOY OF THE JUMP.</p><span class="footer-note">An unofficial fan game. Original pixel art. Made for your browser.</span><span class="version">V.01 <span>●</span> WORLD ONE</span></footer>
+  </main>
+  <dialog id="help-dialog"><button id="close-help" class="dialog-close" aria-label="Close instructions">×</button><div class="eyebrow">DRIVER'S MANUAL / 01</div><h2>A little less gravity.</h2><p>Reach the Supercharger at the end of each stage. Clear all four to complete World 1.</p><div class="manual-row"><kbd>← →</kbd><p><strong>Drive.</strong> Use the arrows or A / D. Hold Shift for extra speed and longer jumps.</p></div><div class="manual-row"><kbd>SPACE</kbd><p><strong>Jet jump.</strong> Tap for a short hop or hold for more lift. Cold gas refills on the ground. W / ↑ also work.</p></div><div class="manual-row"><span class="manual-symbol">ϟ</span><p><strong>Charge up.</strong> Collect charge cells and hit ? crates from below. Every 50 cells earns a life. Cyan cells give you a shield.</p></div><div class="manual-row"><span class="manual-symbol">↓</span><p><strong>Stay in one piece.</strong> Land on service bots to clear them. Avoid their sides, gaps, spikes, and furnace fire. Green flags save a checkpoint.</p></div><p class="manual-foot">P / Esc pauses · R restarts · M toggles audio<br>Touch controls appear on mobile. Best experienced with sound.</p><button id="got-it" class="primary-button">LET'S DRIVE <span>↗</span></button><p class="research-note">Inspired by the Roadster's compressed-air cold-gas thrusters. Pressure, jumping, and recharge are arcade interpretations. <a href="https://www.tesla.com/roadster" target="_blank" rel="noopener noreferrer">Explore the Roadster ↗</a></p></dialog>
+  <script type="module" src="src/game.js"></script>
+</body>
+</html>
