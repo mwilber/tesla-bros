@@ -5,10 +5,30 @@ const canvas=$('game'),game=new Game(),renderer=new Renderer(canvas);
 const keys=new Set(),touch=new Set();
 let pendingJumpPress=false,pendingJumpRelease=false;
 let jumpDown=false,lastState='',lastStage=-1,accumulator=0,last=performance.now(),announceTimer;
-let muted=false,audio,notes=0,nextNote=0,best=0;
+let muted=false,audio,musicStep=0,nextNote=0,best=0;
 try{best=Number(localStorage.getItem('tesla-bros-best'))||0;muted=localStorage.getItem('tesla-bros-muted')==='true';}catch{}
 game.best=best;
-const melody=[64,0,64,67,64,60,62,0,59,0,62,65,69,67,64,0,60,0,60,64,67,72,71,69,67,0,64,67,62,0,59,0];
+// An original 64-step chiptune: syncopated lead, walking bass, offbeat
+// arpeggios, and tiny percussion accents. Each stage shifts its color and pace.
+const musicLead=[
+  76,0,79,81,83,0,81,79,76,74,76,0,72,74,76,79,
+  81,0,84,83,81,79,76,0,74,76,79,74,72,0,72,0,
+  76,0,79,81,83,0,86,84,83,81,79,0,76,79,81,0,
+  84,83,81,79,76,0,74,76,79,0,76,74,72,0,72,0,
+];
+const musicBass=[
+  48,0,55,0,48,55,48,0,45,0,52,0,45,52,45,0,
+  41,0,48,0,41,48,41,0,43,0,50,0,43,50,43,0,
+  48,0,55,0,48,55,48,0,45,0,52,0,45,52,45,0,
+  41,0,48,0,41,48,41,0,43,0,50,0,43,50,43,0,
+];
+const musicRoots=[60,57,65,67,60,57,65,67];
+const stageMusic=[
+  {transpose:0,step:.135,wave:'square'},
+  {transpose:-5,step:.15,wave:'triangle'},
+  {transpose:2,step:.128,wave:'square'},
+  {transpose:-7,step:.145,wave:'sawtooth'},
+];
 function unlockAudio(){if(muted)return;try{audio??=new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();}catch{}}
 function tone(freq,duration=.08,type='square',volume=.025,delay=0,slide){if(!audio||muted)return;const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+duration);g.gain.setValueAtTime(volume,t);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g).connect(audio.destination);o.start(t);o.stop(t+duration+.01);}
 let jetNoise;
@@ -43,7 +63,29 @@ function jetHiss(){
   source.start(t);source.stop(t+duration);
 }
 function sound(type){switch(type){case'jump':jetHiss();break;case'coin':tone(950,.07,'square',.035);tone(1425,.12,'square',.025,.07);break;case'stomp':tone(210,.09,'square',.045,0,75);break;case'bump':tone(110,.06,'triangle',.07);break;case'death':[420,370,310,220,145].forEach((f,i)=>tone(f,.18,'triangle',.07,i*.12));break;case'clear':[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'square',.04,i*.13));break;case'shield':case'checkpoint':case'life':case'boss':[440,554,659,880].forEach((f,i)=>tone(f,.16,'triangle',.06,i*.08));break;case'shieldbreak':tone(560,.25,'sawtooth',.04,0,90);break;case'powerup':tone(250,.35,'triangle',.04,0,900);}}
-function music(){if(!audio||muted||game.state!=='playing')return;const now=audio.currentTime;if(nextNote<now-.5)nextNote=now;while(nextNote<now+.15){const m=melody[notes%melody.length];if(m)tone(440*2**((m-69)/12)*(game.stage===1?.5:1),.12,'triangle',.025,nextNote-now);if(notes%4===0)tone(game.stage===3?82.41:130.81,.14,'triangle',.04,nextNote-now);nextNote+=game.stage===3?.15:.18;notes++;}}
+const midiFrequency=midi=>440*2**((midi-69)/12);
+function music(){
+  if(!audio||muted||game.state!=='playing')return;
+  const now=audio.currentTime,style=stageMusic[game.stage];
+  if(nextNote<now-.5)nextNote=now;
+  while(nextNote<now+.15){
+    const step=musicStep%musicLead.length,delay=nextNote-now;
+    const lead=musicLead[step],bass=musicBass[step];
+    if(lead)tone(midiFrequency(lead+style.transpose),style.step*.72,style.wave,step%8===0?.034:.027,delay);
+    if(bass)tone(midiFrequency(bass+style.transpose),style.step*.82,'triangle',.029,delay);
+    // A bright offbeat arpeggio answers the lead and keeps the loop moving.
+    if(step%8===2||step%8===6){
+      const root=musicRoots[Math.floor(step/8)]+style.transpose;
+      const interval=step%8===2?7:12;
+      tone(midiFrequency(root+interval),style.step*.42,'square',.011,delay);
+    }
+    // Lightweight kick and high tick add momentum without drowning game sounds.
+    if(step%8===0||step%8===4)tone(92,style.step*.45,'triangle',.025,delay,52);
+    if(step%2===1)tone(1700,style.step*.12,'square',.004,delay);
+    nextNote+=style.step;
+    musicStep++;
+  }
+}
 function updateSound(){ $('sound-label').textContent=muted?'Sound off':'Sound on';$('sound-icon').textContent=muted?'◖×':'◖))';$('sound-button').setAttribute('aria-pressed',String(!muted)); }
 function toggleSound(){muted=!muted;try{localStorage.setItem('tesla-bros-muted',muted);}catch{}unlockAudio();updateSound();if(game.state==='playing')canvas.focus({preventScroll:true});}
 updateSound();
