@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Upright player Roadster, projected by drawRoadster in src/roadster.js. -->
+  <rect width="64" height="64" fill="#ff4438"/>
+  <g transform="translate(32 31) scale(1.05)">
+    <polygon fill="#4d626b" points="-18,1 -17,4 -17,2"/>
+    <polygon fill="#4d626b" points="16,1 17,4 17,2"/>
+    <polygon fill="#4d626b" points="-18,1 -21,3 -19,3"/>
+    <polygon fill="#4d626b" points="16,1 13,3 15,3"/>
+    <polygon fill="#2e424a" points="-17,1 -18,0 -18,0 -19,0 -19,0 -20,1 -19,1 -19,2 -18,2 -18,1"/>
+    <polygon fill="#2e424a" points="17,1 16,0 16,0 15,0 15,0 14,1 15,1 15,2 16,2 16,1"/>
+    <polygon fill="#4d626b" points="-18,1 -15,1 -17,0"/>
+    <polygon fill="#4d626b" points="16,1 19,1 17,0"/>
+    <polygon fill="#bdcccd" points="-15,1 -16,-1 -17,-2 -19,-2 -21,-1 -22,1 -21,3 -19,4 -17,4 -16,3"/>
+    <polygon fill="#bdcccd" points="19,1 18,-1 17,-2 15,-2 13,-1 12,1 13,3 15,4 17,4 18,3"/>
+    <polygon fill="#4d626b" points="-18,1 -21,-1 -20,0"/>
+    <polygon fill="#4d626b" points="16,1 13,-1 14,0"/>
+    <polygon fill="#86999d" points="-14,1 -15,-2 -17,-3 -20,-3 -22,-2 -23,1 -22,3 -20,5 -17,5 -15,3"/>
+    <polygon fill="#86999d" points="20,1 19,-2 17,-3 14,-3 12,-2 11,1 12,3 14,5 17,5 19,3"/>
+    <polygon fill="#1f2d31" points="-13,1 -14,-2 -17,-4 -20,-4 -23,-2 -24,1 -23,4 -20,6 -17,6 -14,4"/>
+    <polygon fill="#1f2d31" points="21,1 20,-2 17,-4 14,-4 11,-2 10,1 11,4 14,6 17,6 20,4"/>
+    <polygon fill="#4d626b" points="-18,1 -17,-3 -19,-1"/>
+    <polygon fill="#4d626b" points="16,1 17,-3 15,-1"/>
+    <polygon fill="#7f8e93" points="-9,-6 -8,-6 -10,-1 -11,-1"/>
+    <polygon fill="#253237" points="-26,1 21,1 19,-1 -24,-2"/>
+    <polygon fill="#b6c8c9" points="-21,2 -17,2 -17,2 -21,2"/>
+    <polygon fill="#b6c8c9" points="14,2 18,2 18,2 14,2"/>
+    <polygon fill="#ff5b55" points="-26,-5 -22,-5 -22,-6 -26,-6"/>
+    <polygon fill="#eef2ec" points="-23,-6 9,-5 20,-3 9,-4 -23,-5"/>
+    <polygon fill="#8b989d" points="25,2 -26,1 -26,-7 11,-6 25,-2"/>
+    <polygon fill="#f8ffe2" points="21,-2 25,-1 25,-2 21,-3"/>
+    <polygon fill="#1e3035" points="8,-7 -2,-10 -11,-10 -19,-7"/>
+    <polygon fill="#a1aeb1" points="12,-6 0,-11 -12,-11 -21,-7"/>
+    <polygon fill="#64767a" points="-15,3 15,3 15,4 -15,4"/>
+    <polygon fill="#202d33" points="-23,2 21,2 23,4 -21,5"/>
+    <polygon fill="#59666a" points="-26,1 25,2 27,4 -24,5"/>
+    <polygon fill="#dae1de" points="27,4 25,2 25,-2 27,0"/>
+    <polygon fill="#354044" points="-26,1 -24,5 -24,-3 -26,-7"/>
+    <polygon fill="#f54b4c" points="-26,-4 -24,-1 -24,-2 -26,-5"/>
+    <polygon fill="#e4e9e6" points="-26,-7 -24,-3 13,-2 27,0 25,-2 11,-6"/>
+    <polygon fill="#263d41" points="0,-11 2,-9 14,-2 12,-6"/>
+    <polygon fill="#34474a" points="-21,-7 -19,-3 -10,-9 -12,-11"/>
+    <polygon fill="#eaf0eb" points="-12,-11 -10,-9 2,-9 0,-11"/>
+    <polygon fill="#b6c8c9" points="-19,5 -15,5 -15,6 -19,6"/>
+    <polygon fill="#b6c8c9" points="16,5 20,5 20,6 16,6"/>
+    <polygon fill="#f8ffe2" points="23,2 27,1 27,0 23,0"/>
+    <polygon fill="#253237" points="-24,5 23,5 21,3 -22,2"/>
+    <polygon fill="#bdc7c8" points="-24,5 27,4 27,0 13,-2 -24,-3"/>
+    <polygon fill="#4d626b" points="-16,5 -14,9 -14,7"/>
+    <polygon fill="#4d626b" points="18,5 20,9 20,7"/>
+    <polygon fill="#1f2d31" points="-10,5 -11,2 -14,0 -17,0 -20,2 -21,5 -20,8 -17,10 -14,10 -11,8"/>
+    <polygon fill="#1f2d31" points="24,5 23,2 20,0 17,0 14,2 13,5 14,8 17,10 20,10 23,8"/>
+    <polygon fill="#4d626b" points="-16,5 -19,7 -17,7"/>
+    <polygon fill="#4d626b" points="18,5 15,7 17,7"/>
+    <polygon fill="#86999d" points="-11,5 -12,3 -14,1 -17,1 -19,3 -20,5 -19,8 -17,9 -14,9 -12,8"/>
+    <polygon fill="#86999d" points="23,5 22,3 20,1 17,1 15,3 14,5 15,8 17,9 20,9 22,8"/>
+    <polygon fill="#bdcccd" points="-12,5 -13,3 -15,2 -17,2 -18,3 -19,5 -18,7 -17,8 -15,8 -13,7"/>
+    <polygon fill="#bdcccd" points="22,5 21,3 19,2 17,2 16,3 15,5 16,7 17,8 19,8 21,7"/>
+    <polygon fill="#4d626b" points="-16,5 -12,5 -14,4"/>
+    <polygon fill="#4d626b" points="18,5 22,5 20,4"/>
+    <polygon fill="#c4d0d0" points="-19,-3 -10,-9 2,-9 14,-2"/>
+    <polygon fill="#2e424a" points="-14,5 -15,5 -15,4 -16,4 -16,5 -17,5 -16,6 -16,6 -15,6 -15,6"/>
+    <polygon fill="#2e424a" points="20,5 19,5 19,4 18,4 18,5 17,5 18,6 18,6 19,6 19,6"/>
+    <polygon fill="#4d626b" points="-16,5 -19,3 -18,5"/>
+    <polygon fill="#4d626b" points="18,5 15,3 16,5"/>
+    <polygon fill="#eef2ec" points="-21,-2 11,-1 22,0 11,0 -21,-1"/>
+    <polygon fill="#4d626b" points="-16,5 -14,2 -16,3"/>
+    <polygon fill="#4d626b" points="18,5 20,2 18,3"/>
+    <polygon fill="#7f8e93" points="-7,-2 -6,-2 -8,2 -9,2"/>
+    <polygon fill="#263c40" points="-17,-4 -9,-8 0,-8 10,-3"/>
+    <polygon fill="#779194" points="-8,-7 -7,-7 -11,-4 -12,-4"/>
+    <polygon fill="#ff5b55" points="-24,-1 -20,-1 -20,-2 -24,-2"/>
+  </g>
+</svg>
