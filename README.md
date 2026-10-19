@@ -1,6 +1,8 @@
 # Tesla Bros.
 
-A browser platformer inspired by the feel of NES Super Mario Bros., starring a Roadster with cold-gas jet jumps. The first iteration contains **World 1: four original stages**, with original procedural pixel art and synthesized audio. No ROM, Nintendo artwork, music, or external runtime assets are required.
+A browser platformer inspired by the feel of NES Super Mario Bros., starring the Tesla Roadster! With cold-gas jet boost and rocket jumps, speed through where no car has gone before! The first iteration contains **World 1: four original stages**, with original procedural pixel art and synthesized audio.
+
+![Tesla Bros. Roadster in flight with its vertical jets firing](assets/tesla-bros-social.jpg)
 
 ## Play locally
 
