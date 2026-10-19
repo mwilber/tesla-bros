@@ -6,3 +6,55 @@
 .creator-badge a:hover{color:var(--red)}
 .intro-left{text-align:left}.intro-left p{font-size:12px;line-height:1.7;color:#747e6f;margin:9px 0 0}
 @media(max-width:700px){.intro{flex-direction:column;align-items:stretch;gap:14px}.creator-credit{justify-content:flex-end}.creator-badge{font-size:10px;padding:7px 12px;border-radius:14px}}
+
+/* High-tech page shell */
+body{
+  color:#f4f6f5;
+  background-color:#050607;
+  background-image:
+    radial-gradient(circle at 72% -12%,rgba(233,80,60,.2),transparent 34rem),
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:auto,32px 32px,32px 32px;
+}
+.site-header{border-bottom:1px solid #25292c}
+.brand{color:#fff;text-shadow:0 0 22px rgba(255,255,255,.08)}
+.brand-icon{box-shadow:0 0 24px rgba(233,80,60,.3)}
+.brand-dot{color:#ff5447}
+.nav-button,.icon-button{color:#f4f6f5;transition:color .16s ease}
+.nav-button:hover,.icon-button:hover{color:#ff5a4c}
+.key-icon{border-color:#e9503c;color:#ff7064}
+.nav-divider{background:#303437}
+.intro{border-bottom:1px solid #1d2022}
+.edition{color:#f4f6f5}
+.edition span{color:#e9503c}
+.intro-left p{color:#949a9a}
+.creator-badge{
+  color:#b9bebe;
+  background:linear-gradient(135deg,rgba(255,255,255,.055),rgba(255,255,255,.018));
+  border-color:#5b2b29;
+  border-radius:4px;
+  box-shadow:inset 3px 0 0 #e9503c,0 12px 32px rgba(0,0,0,.28);
+}
+.creator-badge a{color:#fff}
+.creator-badge a:hover{color:#ff5a4c}
+.arcade{border-color:#3a3e40;box-shadow:0 0 0 1px rgba(233,80,60,.28),0 24px 80px rgba(0,0,0,.6)}
+.below-game{border-color:#292d30}
+.control-guide{color:#c4c8c8}
+.control-guide .controls-label{color:#ff6256}
+kbd{color:#f8f9f8;background:#101315;border-color:#4b5052;border-bottom-color:#e9503c;box-shadow:0 0 12px rgba(233,80,60,.08)}
+.text-button{color:#ff6256}
+.text-button:hover{color:#fff}
+footer{color:#737a7c}
+footer p{color:#f4f6f5}
+.version span{color:#e9503c}
+dialog{color:#f4f6f5;background:#0a0d0f;border-color:#e9503c;box-shadow:0 28px 100px #000,0 0 40px rgba(233,80,60,.16)}
+dialog::backdrop{background:rgba(0,0,0,.84);backdrop-filter:blur(7px)}
+dialog>p,.manual-row p{color:#aeb4b4}
+.dialog-close,.manual-symbol,.research-note a{color:#ff6256}
+.manual-row{border-color:#292e30}
+.manual-row strong{color:#fff}
+
+@media(max-width:700px){
+  .creator-badge{border-radius:4px}
+}
