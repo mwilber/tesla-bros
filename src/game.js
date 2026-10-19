@@ -11,7 +11,38 @@ game.best=best;
 const melody=[64,0,64,67,64,60,62,0,59,0,62,65,69,67,64,0,60,0,60,64,67,72,71,69,67,0,64,67,62,0,59,0];
 function unlockAudio(){if(muted)return;try{audio??=new (window.AudioContext||window.webkitAudioContext)();if(audio.state==='suspended')audio.resume();}catch{}}
 function tone(freq,duration=.08,type='square',volume=.025,delay=0,slide){if(!audio||muted)return;const t=audio.currentTime+delay,o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);if(slide)o.frequency.exponentialRampToValueAtTime(slide,t+duration);g.gain.setValueAtTime(volume,t);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g).connect(audio.destination);o.start(t);o.stop(t+duration+.01);}
-function sound(type){switch(type){case'jump':tone(150,.16,'triangle',.10,0,480);tone(120,.13,'sawtooth',.014);break;case'coin':tone(950,.07,'square',.035);tone(1425,.12,'square',.025,.07);break;case'stomp':tone(210,.09,'square',.045,0,75);break;case'bump':tone(110,.06,'triangle',.07);break;case'death':[420,370,310,220,145].forEach((f,i)=>tone(f,.18,'triangle',.07,i*.12));break;case'clear':[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'square',.04,i*.13));break;case'shield':case'checkpoint':case'life':case'boss':[440,554,659,880].forEach((f,i)=>tone(f,.16,'triangle',.06,i*.08));break;case'shieldbreak':tone(560,.25,'sawtooth',.04,0,90);break;case'powerup':tone(250,.35,'triangle',.04,0,900);}}
+let jetNoise;
+function jetHiss(){
+  if(!audio||muted)return;
+  const duration=.38,t=audio.currentTime;
+  if(!jetNoise){
+    jetNoise=audio.createBuffer(1,Math.ceil(audio.sampleRate*duration),audio.sampleRate);
+    const samples=jetNoise.getChannelData(0);
+    for(let i=0;i<samples.length;i++)samples[i]=Math.random()*2-1;
+  }
+  const source=audio.createBufferSource(),high=audio.createBiquadFilter(),low=audio.createBiquadFilter(),hiss=audio.createGain();
+  source.buffer=jetNoise;
+  high.type='highpass';high.frequency.value=700;high.Q.value=.5;
+  low.type='lowpass';low.Q.value=.5;
+  low.frequency.setValueAtTime(8500,t);low.frequency.exponentialRampToValueAtTime(2800,t+duration);
+  // A sharp valve opening, a strong air rush, then falling tank pressure.
+  hiss.gain.setValueAtTime(.0001,t);
+  hiss.gain.exponentialRampToValueAtTime(.38,t+.006);
+  hiss.gain.exponentialRampToValueAtTime(.24,t+.07);
+  hiss.gain.exponentialRampToValueAtTime(.08,t+.23);
+  hiss.gain.exponentialRampToValueAtTime(.0001,t+duration);
+  source.connect(high).connect(low).connect(hiss).connect(audio.destination);
+  // A brief lower-frequency puff gives the jet weight without a pitched tone.
+  const body=audio.createBiquadFilter(),puff=audio.createGain();
+  body.type='bandpass';body.frequency.value=420;body.Q.value=.65;
+  puff.gain.setValueAtTime(.0001,t);
+  puff.gain.exponentialRampToValueAtTime(.18,t+.008);
+  puff.gain.exponentialRampToValueAtTime(.0001,t+.14);
+  source.connect(body).connect(puff).connect(audio.destination);
+  source.onended=()=>{for(const node of [source,high,low,hiss,body,puff])node.disconnect();};
+  source.start(t);source.stop(t+duration);
+}
+function sound(type){switch(type){case'jump':jetHiss();break;case'coin':tone(950,.07,'square',.035);tone(1425,.12,'square',.025,.07);break;case'stomp':tone(210,.09,'square',.045,0,75);break;case'bump':tone(110,.06,'triangle',.07);break;case'death':[420,370,310,220,145].forEach((f,i)=>tone(f,.18,'triangle',.07,i*.12));break;case'clear':[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'square',.04,i*.13));break;case'shield':case'checkpoint':case'life':case'boss':[440,554,659,880].forEach((f,i)=>tone(f,.16,'triangle',.06,i*.08));break;case'shieldbreak':tone(560,.25,'sawtooth',.04,0,90);break;case'powerup':tone(250,.35,'triangle',.04,0,900);}}
 function music(){if(!audio||muted||game.state!=='playing')return;const now=audio.currentTime;if(nextNote<now-.5)nextNote=now;while(nextNote<now+.15){const m=melody[notes%melody.length];if(m)tone(440*2**((m-69)/12)*(game.stage===1?.5:1),.12,'triangle',.025,nextNote-now);if(notes%4===0)tone(game.stage===3?82.41:130.81,.14,'triangle',.04,nextNote-now);nextNote+=game.stage===3?.15:.18;notes++;}}
 function updateSound(){ $('sound-label').textContent=muted?'Sound off':'Sound on';$('sound-icon').textContent=muted?'◖×':'◖))';$('sound-button').setAttribute('aria-pressed',String(!muted)); }
 function toggleSound(){muted=!muted;try{localStorage.setItem('tesla-bros-muted',muted);}catch{}unlockAudio();updateSound();if(game.state==='playing')canvas.focus({preventScroll:true});}
