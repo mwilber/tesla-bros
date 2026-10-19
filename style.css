@@ -39,6 +39,8 @@ body{
 .creator-badge a{color:#fff}
 .creator-badge a:hover{color:#ff5a4c}
 .arcade{border-color:#3a3e40;box-shadow:0 0 0 1px rgba(233,80,60,.28),0 24px 80px rgba(0,0,0,.6)}
+.start-card,.start-card h2{color:#26352e}
+.telemetry{color:#26352e}
 .below-game{border-color:#292d30}
 .control-guide{color:#c4c8c8}
 .control-guide .controls-label{color:#ff6256}
