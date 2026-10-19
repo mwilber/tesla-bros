@@ -39,6 +39,12 @@ export class Renderer {
     const centerX=x+p.w/2, centerY=y+p.h-11;
     this.rect(x-4,y+p.h-2,50,3,'#193d3230');
     if(p.shield){c.strokeStyle='#ceffff';c.lineWidth=2;c.strokeRect(x-9,y-5,60,34);this.rect(x-11,y+6,2,12,'#89ecdb');}
+    if(p.boosting&&!ready){
+      const rearX=centerX-p.facing*27,len=14+Math.sin(this.clock*52)*4,start=p.facing>0?rearX-len:rearX;
+      this.rect(start,centerY-3,len,6,'#d6f3ef');
+      this.rect(p.facing>0?start-6:rearX+len,centerY-1,7,3,'#f5fff0');
+      if(Math.random()<.8)this.particles.push({x:rearX-p.facing*(len+2),y:centerY+(Math.random()-.5)*6,vx:-p.facing*(75+Math.random()*70),vy:(Math.random()-.5)*24,life:.28,color:Math.random()<.5?'#e9fff7':'#c6e8e5',size:2+Math.random()*3});
+    }
     drawRoadster(c,{x:centerX,y:centerY,facing:p.facing,roll:ready?0:(p.roll||0)});
     if(p.thrust&&!ready){
       // Stabilizing jets continue to push down as the body rolls around them.

@@ -72,13 +72,13 @@ export function makeLevel(index) {
 export class Game {
   constructor(){this.best=0;this.events=[];this.reset();}
   reset(){this.stage=0;this.score=0;this.cells=0;this.lives=3;this.level=makeLevel(0);this.time=300;this.state='ready';this.camera=0;this.elapsed=0;this.deathTimer=0;this.spawn();}
-  spawn(){this.player={x:this.level.checkpointReached?this.level.checkpoint+12:100,y:FLOOR-24,w:42,h:24,vx:0,vy:0,grounded:true,coyote:.1,buffer:0,pressure:100,jet:0,facing:1,invincible:2,shield:false,roll:0,rolling:false};this.camera=Math.max(0,this.player.x-270);}
+  spawn(){this.player={x:this.level.checkpointReached?this.level.checkpoint+12:100,y:FLOOR-24,w:42,h:24,vx:0,vy:0,grounded:true,coyote:.1,buffer:0,pressure:100,jet:0,facing:1,invincible:2,shield:false,roll:0,rolling:false,boosting:false};this.camera=Math.max(0,this.player.x-270);}
   start(){if(this.state==='ready'){this.state='playing';this.events.push({type:'start'});}else if(this.state==='paused')this.state='playing';else if(this.state==='stageclear')this.next();else if(this.state==='gameover'||this.state==='won'){this.reset();this.state='playing';}}
   pause(){if(this.state==='playing')this.state='paused';else if(this.state==='paused')this.state='playing';}
   restart(){this.reset();this.state='playing';this.events.push({type:'start'});}
   next(){if(this.stage>=3)return;this.stage++;this.level=makeLevel(this.stage);this.time=300;this.spawn();this.state='playing';this.events.push({type:'stage',text:`WORLD 1–${this.stage+1} · ${this.level.name}`});}
   hit(){if(this.player.invincible>0)return;if(this.player.shield){this.player.shield=false;this.player.invincible=2;this.events.push({type:'shieldbreak'});return;}this.die();}
-  die(){if(this.state!=='playing')return;this.lives--;this.state='dying';this.deathTimer=1.1;this.player.vy=-260;this.player.thrust=false;this.events.push({type:'death'});}
+  die(){if(this.state!=='playing')return;this.lives--;this.state='dying';this.deathTimer=1.1;this.player.vy=-260;this.player.thrust=false;this.player.boosting=false;this.events.push({type:'death'});}
   reward(n){this.score+=n;this.best=Math.max(this.best,this.score);}
   collect(){this.cells++;this.reward(100);if(this.cells%50===0){this.lives++;this.events.push({type:'life',text:'50 CHARGE CELLS · EXTRA LIFE'});}else this.events.push({type:'coin'});}
   hitBlock(b){if(b.type==='question'&&!b.used){b.used=true;b.bump=.2;if(b.content==='shield'){this.level.pickups.push({x:b.x+4,y:b.y-24,w:24,h:24});this.events.push({type:'powerup'});}else{this.collect();this.events.push({type:'block',x:b.x+16,y:b.y});}}else if(b.type==='brick'){b.bump=.16;this.reward(10);this.events.push({type:'bump'});}}
@@ -90,7 +90,7 @@ export class Game {
     if(this.time<=0){this.time=0;this.die();return;}
     const p=this.player,l=this.level;
     p.invincible=Math.max(0,p.invincible-dt);p.coyote=p.grounded?.11:Math.max(0,p.coyote-dt);p.buffer=input.jumpPressed?.14:Math.max(0,p.buffer-dt);
-    const direction=(input.right?1:0)-(input.left?1:0), maxSpeed=input.run?310:222;
+    const direction=(input.right?1:0)-(input.left?1:0), boosting=!!input.run&&direction!==0, maxSpeed=input.run?310:222;
     const target=direction*maxSpeed,accel=p.grounded?1900:1100;
     p.vx+=Math.max(-accel*dt,Math.min(accel*dt,target-p.vx));
     if(direction)p.facing=direction;
@@ -105,6 +105,7 @@ export class Game {
     const oldBottom=p.y+p.h;
     p.x+=p.vx*dt;
     for(const b of l.solids){if(overlaps(p,b)){if(p.vx>0)p.x=b.x-p.w;else if(p.vx<0)p.x=b.x+b.w;p.vx=0;}}
+    p.boosting=boosting&&Math.abs(p.vx)>20;
     p.x=Math.max(0,Math.min(l.width-p.w,p.x));
     p.y+=p.vy*dt;p.grounded=false;
     for(const b of l.solids){b.bump=Math.max(0,(b.bump||0)-dt);if(overlaps(p,b)){if(p.vy>=0){p.y=b.y-p.h;p.vy=0;p.grounded=true;p.jet=0;}else{p.y=b.y+b.h;p.vy=0;p.jet=0;this.hitBlock(b);}}}
@@ -125,7 +126,7 @@ export class Game {
     if(p.y>H+90)this.die();
     if(p.x>=l.goal&&this.state==='playing'){
       const boss=l.enemies.find(e=>e.kind==='boss'&&e.alive);
-      if(!boss){this.reward(Math.ceil(this.time)*10+1000);this.state=this.stage===3?'won':'stageclear';this.events.push({type:'clear'});}else{p.x=l.goal-5;this.events.push({type:'gate',text:'DEFEAT THE SENTINEL TO FINISH'});}
+      if(!boss){p.boosting=false;this.reward(Math.ceil(this.time)*10+1000);this.state=this.stage===3?'won':'stageclear';this.events.push({type:'clear'});}else{p.x=l.goal-5;this.events.push({type:'gate',text:'DEFEAT THE SENTINEL TO FINISH'});}
     }
     const vw=this.viewWidth||W;this.camera=Math.max(0,Math.min(l.width-vw,this.camera+(p.x-vw*.34-this.camera)*Math.min(1,dt*7)));
   }
