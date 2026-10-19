@@ -108,7 +108,18 @@ export class Game {
     p.boosting=boosting&&Math.abs(p.vx)>20;
     p.x=Math.max(0,Math.min(l.width-p.w,p.x));
     p.y+=p.vy*dt;p.grounded=false;
-    for(const b of l.solids){b.bump=Math.max(0,(b.bump||0)-dt);if(overlaps(p,b)){if(p.vy>=0){p.y=b.y-p.h;p.vy=0;p.grounded=true;p.jet=0;}else{p.y=b.y+b.h;p.vy=0;p.jet=0;this.hitBlock(b);}}}
+    let ceiling=null;
+    const centerX=p.x+p.w/2;
+    for(const b of l.solids){
+      b.bump=Math.max(0,(b.bump||0)-dt);
+      if(!overlaps(p,b))continue;
+      if(p.vy>=0){p.y=b.y-p.h;p.vy=0;p.grounded=true;p.jet=0;}
+      // Hit the first underside reached, favoring the block over the car's
+      // center when adjacent blocks overlap the same unchanged hitbox.
+      else if(!ceiling||b.y+b.h>ceiling.y+ceiling.h||
+        (b.y+b.h===ceiling.y+ceiling.h&&Math.abs(b.x+b.w/2-centerX)<Math.abs(ceiling.x+ceiling.w/2-centerX))){ceiling=b;}
+    }
+    if(ceiling){p.y=ceiling.y+ceiling.h;p.vy=0;p.jet=0;this.hitBlock(ceiling);}
     updateRoll(p,l.solids,dt,!!input.jump);
     for(const c of l.coins)if(!c.taken&&overlaps(p,c)){c.taken=true;this.collect();this.events.push({type:'spark',x:c.x,y:c.y});}
     for(const s of l.pickups)if(!s.taken&&overlaps(p,s)){s.taken=true;p.shield=true;this.reward(500);this.events.push({type:'shield',text:'ION SHIELD · ONE FREE HIT'});}

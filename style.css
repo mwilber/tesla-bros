@@ -60,3 +60,17 @@ dialog>p,.manual-row p{color:#aeb4b4}
 @media(max-width:700px){
   .creator-badge{border-radius:4px}
 }
+
+/* Keep portrait touch controls over the telemetry, below the play field. */
+@media(max-width:700px) and (orientation:portrait) and (pointer:coarse){
+  .game-screen{overflow:visible}
+  .touch-controls{
+    top:100%;
+    bottom:auto;
+    height:68px;
+    align-items:center;
+    z-index:1;
+  }
+  .touch-controls .touch-jump{margin-top:0}
+  .arcade:fullscreen .touch-controls{height:60px}
+}

@@ -15,6 +15,38 @@ test('the Roadster lands on platforms without sinking and cannot drive through a
 test('question crates only dispense their reward once when struck from below',()=>{
   const g=fresh(),b=g.level.solids.find(b=>b.type==='question');g.player.x=b.x;step(g,60,{jump:true,jumpPressed:true});assert.equal(b.used,true);const rewards=g.cells+g.level.pickups.length;assert.equal(rewards,1);g.hitBlock(b);assert.equal(g.cells+g.level.pickups.length,1);
 });
+test('a straight jump hits the block above the car center, regardless of facing or solid order',()=>{
+  for(const facing of [-1,1])for(const reverse of [false,true])for(const offset of [5,16,27]){
+    const g=fresh(),b=g.level.solids.find(b=>b.x===704&&b.y===248);
+    const {w,h}=g.player;
+    Object.assign(g.player,{x:b.x+offset-w/2,facing});
+    if(reverse)g.level.solids.reverse();
+    step(g,60,{jump:true,jumpPressed:true});
+    assert.equal(b.used,true,`center offset ${offset}, facing ${facing}, reversed ${reverse}`);
+    assert.equal(g.events.filter(e=>e.type==='bump').length,0,'neighboring bricks must not receive the hit');
+    assert.equal(g.level.pickups.length,1,'only the centered question block dispenses a reward');
+    assert.equal(g.player.w,w);assert.equal(g.player.h,h);
+  }
+});
+test('a centered brick takes the hit even when the car also overlaps a question block',()=>{
+  const g=fresh(),b=g.level.solids.find(b=>b.x===736&&b.y===248);
+  g.player.x=b.x+5-g.player.w/2;
+  step(g,60,{jump:true,jumpPressed:true});
+  assert.equal(g.events.filter(e=>e.type==='bump').length,1);
+  assert.equal(g.score,10);
+  assert.equal(g.level.solids.some(b=>b.type==='question'&&b.used),false);
+  assert.equal(g.level.pickups.length,0);
+});
+test('an upward collision reaches a lower underside before a higher centered block',()=>{
+  const g=fresh();
+  const lower={x:100,y:248,w:32,h:32,type:'question',used:false};
+  const upper={x:132,y:247,w:32,h:32,type:'question',used:false};
+  g.level.solids=[upper,lower];
+  Object.assign(g.player,{x:119,y:281,vy:-360,grounded:false,coyote:0});
+  step(g,1);
+  assert.equal(lower.used,true);assert.equal(upper.used,false);
+  assert.equal(g.player.y,280);assert.equal(g.player.vy,0);
+});
 test('collectibles grant score and every 50 cells grants a life',()=>{const g=fresh();for(let i=0;i<50;i++)g.collect();assert.equal(g.score,5000);assert.equal(g.lives,4);});
 test('a shield absorbs one hit; subsequent contact consumes one life',()=>{const g=fresh();g.player.invincible=0;g.player.shield=true;g.hit();assert.equal(g.lives,3);assert.equal(g.player.shield,false);g.player.invincible=0;g.hit();assert.equal(g.lives,2);assert.equal(g.state,'dying');g.hit();assert.equal(g.lives,2);});
 test('stomping a bot defeats it and gives the player a bounce',()=>{const g=fresh();const e={x:220,y:327,w:28,h:25,vx:0,min:200,max:260,alive:true,kind:'bot',hp:1,t:0};g.level.enemies=[e];Object.assign(g.player,{x:215,y:301,vy:180,grounded:false,invincible:0});step(g,4);assert.equal(e.alive,false);assert.ok(g.player.vy<0);assert.equal(g.score,200);});
