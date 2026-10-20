@@ -30,6 +30,8 @@ Open **http://localhost:5173** and choose **Start Engine**. You can also serve t
 
 Touch controls appear on devices with a coarse pointer. Fullscreen is available through the top-right control when supported by the browser.
 
+The original background tune uses a Commodore SID-inspired three-voice synth: shifting pulse widths, a sawtooth bass, rapid chord arpeggios, ADSR envelopes, and a shared resonant filter. Eight authored sections develop the theme through an answer, lift, quieter bridge, melodic variation, solo, breakdown, and finale, with changing bass patterns, arpeggio directions, and dynamics. The 512-step melody takes roughly 65–77 seconds to repeat, depending on the stage's tempo. Each stage has its own register and filter color. This is a lightweight Web Audio interpretation, not a chip emulator.
+
 The silver, low-profile Roadster performs a full barrel roll around its nose-to-tail axis on each jet jump. A jump releases a short burst of gas. Holding jump extends the burst; landing on any solid surface replenishes pressure. Hit question crates from below to release charge cells or an ion shield. Stomp service bots, collect 50 cells for an extra life, and pass the midpoint flag to set a checkpoint. Reach each stage's Supercharger gate. The final sentinel takes three stomps before the gate opens.
 
 ## World 1
@@ -54,6 +56,8 @@ The Node test suite covers variable jump height, gas recovery, collisions, crate
 - `src/render.js`: Canvas 2D pixel art, backgrounds, and particles.
 - `src/roadster.js`: silver Roadster model and longitudinal roll projection.
 - `src/game.js`: browser input, UI, audio, and fixed-step game loop.
+- `src/music.js`: SID-inspired three-voice background music.
+- `src/music-score.js`: eight-section melody, chord progressions, and accompaniment patterns.
 - `tests/`: game simulation tests and recorded terrain routes.
 - `RESEARCH.md`: Roadster sources and the interpretation used for gameplay.
 
