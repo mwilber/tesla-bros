@@ -1,16 +1,10 @@
 // SID-inspired synthesis, rather than a cycle-accurate chip emulator.
 // Three monophonic voices share a resonant filter; modulation runs at 50 Hz.
-import { musicSections } from './music-score.js';
+import { stageSongs } from './music-score.js';
 
 const TICK = 1 / 50;
 const SILENCE = .0001;
 const frequency = midi => 440 * 2 ** ((midi - 69) / 12);
-const styles = [
-  { transpose: 0, step: .135, cutoff: 2600, resonance: 1.8 },
-  { transpose: -5, step: .15, cutoff: 1600, resonance: 2.4 },
-  { transpose: 2, step: .128, cutoff: 3200, resonance: 1.5 },
-  { transpose: -7, step: .145, cutoff: 1900, resonance: 2.8 },
-];
 
 export class SIDMusic {
   constructor(audio) {
@@ -72,17 +66,21 @@ export class SIDMusic {
   }
 
   schedule(time, style) {
-    const section = musicSections[Math.floor(this.step / 64) % musicSections.length];
+    const section = style.sections[Math.floor(this.step / 64) % style.sections.length];
     const step = this.step % 64, chord = section.chords[Math.floor(step / 8)];
     const bass = section.bass[step % 8];
     const accent = step % 8 === 0 ? 1.05 : 1;
-    if (section.lead[step]) this.gate(0, section.lead[step] + style.transpose,
-      time, style.step * .92, .25 * section.energy * accent, .55);
-    if (bass !== null) this.gate(1, chord.bass + bass + style.transpose,
+    if (section.lead[step] > 0) {
+      let heldSteps = 0;
+      while (section.lead[step + heldSteps + 1] === -1) heldSteps++;
+      this.gate(0, section.lead[step], time, style.step * (heldSteps + style.leadGate),
+        .25 * section.energy * accent, style.sustain);
+    }
+    if (bass !== null) this.gate(1, chord.bass + bass + style.bassShift,
       time, style.step * .9, .3 * section.energy, .38);
     // A single voice cycles the chord at chip-frame speed, rather than stacking notes.
     if (step % section.arpEvery === 0) {
-      this.gate(2, chord.root + style.transpose, time, style.step * (section.arpEvery - .15),
+      this.gate(2, chord.root, time, style.step * (section.arpEvery - .15),
         .12 * section.energy, .5);
       this.voices[2].intervals = section.arp.map(index => chord.intervals[index]);
     }
@@ -109,7 +107,7 @@ export class SIDMusic {
       this.playing = false;
       return;
     }
-    const style = styles[stage];
+    const style = stageSongs[stage];
     if (!this.playing || this.stage !== stage || this.nextTick < now - .25) {
       // Discard lookahead from the old stage or transport position before restarting.
       for (const voice of this.voices) {
@@ -131,7 +129,8 @@ export class SIDMusic {
     // Pulse width is updated on the live oscillators; pitch/envelopes use lookahead.
     for (const index of [0, 2]) {
       const voice = this.voices[index];
-      const width = Math.round((.28 + .16 * Math.sin(now * (index === 0 ? 3.1 : 1.7))) * 32);
+      const [center, depth, speed] = style.pulse;
+      const width = Math.round((center + depth * Math.sin(now * speed * (index === 0 ? 1 : .55))) * 32);
       if (voice.width !== width) {
         voice.oscillator.setPeriodicWave(this.pulse(width / 32));
         voice.width = width;
@@ -145,9 +144,9 @@ export class SIDMusic {
       const [melody, low, chord] = this.voices;
       // Brief pitch attacks and delayed vibrato give the lead its tracker bite.
       melody.oscillator.detune.setValueAtTime(melody.age === 0 ? 70 :
-        melody.age > .06 ? Math.sin(this.clock * Math.PI * 11) * 12 : 0, this.nextTick);
+        melody.age > .06 ? Math.sin(this.clock * Math.PI * 11) * style.vibrato : 0, this.nextTick);
       low.oscillator.detune.setValueAtTime(low.age === 0 ? 120 : 0, this.nextTick);
-      const chordStep = Math.round(chord.age / TICK) % chord.intervals.length;
+      const chordStep = Math.floor((chord.age + .00001) / (TICK * style.arpTicks)) % chord.intervals.length;
       chord.oscillator.frequency.setValueAtTime(frequency(chord.note + chord.intervals[chordStep]), this.nextTick);
       for (const voice of this.voices) voice.age += TICK;
       this.clock += TICK;
